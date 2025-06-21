@@ -5,24 +5,24 @@ on:
   pull_request:
     branches: [dev, hml, prod]
 jobs:
-   ci:
+   environemnt:
     name: CI - Lint, Format, Test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
-      
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version-file: ".python-version"
 
-    - name: Install dependencies with uv
+    - name: Dependencies installation
       run: |
-        run: uv sync --locked --all-extras --dev
+        uv sync --locked --all-extras --dev
 
     - name: Lint with Ruff
       run: ruff check .
