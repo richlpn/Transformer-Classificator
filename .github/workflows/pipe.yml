@@ -1,0 +1,36 @@
+name: Transformer-Classificator
+on:
+  push:
+    branches: [dev, hml, prod]
+  pull_request:
+    branches: [dev, hml, prod]
+jobs:
+   ci:
+    name: CI - Lint, Format, Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    - name: Get Python version
+      id: python_version
+      run: |
+          PYTHON_VERSION=$(cat .requires-python)
+          echo "version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+  
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ steps.python_version.outputs.version }}
+
+    - name: Install dependencies with uv
+      run: |
+        uv pip install -r requirements.txt
+        uv pip install ruff black pytest
+
+    - name: Lint with Ruff
+      run: ruff check .
